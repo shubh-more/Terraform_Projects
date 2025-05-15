@@ -6,16 +6,26 @@ terraform {
     }
   }
 }
+#   backend "s3" {
+#     bucket         = "state-store-bucket"
+#     key            = "terraform.tfstate"
+#     region         = "us-east-1"
+#     dynamodb_table = "state-store-table"
+#     encrypt        = true
+#   }
+# }
+
+
 
 provider "aws" {
  profile= "default" 
-  region = "us-east-1"
+  region = var.location
 }
-
 
 # Create a VPC
 resource "aws_vpc" "InfravPC" {
- cidr_block = "10.0.0.0/16" 
+ cidr_block = var.cidr_block
+ 
 tags = {
     Name = "InfravPC"
   }
@@ -25,7 +35,7 @@ tags = {
 # Create a subnet in the VPC
 resource "aws_subnet" "subnet" {
   vpc_id     = aws_vpc.InfravPC.id
-  cidr_block = "10.0.0.0/24"
+  cidr_block = var.subnet_cidr_block
 
   tags = {
     Name = "Infrasubnet "
